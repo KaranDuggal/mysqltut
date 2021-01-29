@@ -1,6 +1,8 @@
+const bcrypt = require('bcrypt')
 const { Users } = require('../models')
 
 async function createUser(userOpts) {
+    
     if (!userOpts.username) {
         throw new Error('did not supply username')
     }
@@ -10,7 +12,12 @@ async function createUser(userOpts) {
     if (!userOpts.password) {
         throw new Error('did not supply password')
     }
+    let hashedPassword = await bcrypt.hash(userOpts.password, 10);
+    userOpts.password = hashedPassword
+    console.log('userOpts==========>:', userOpts)
     const user = await Users.create(userOpts)
+    console.log('-------------------------run-------------');
+
     if (!user) {
         throw new Error('could not create user')
     }
@@ -78,7 +85,7 @@ async function deleteUser(userOpts) {
     return user
 }
 module.exports = {
-    createUser, verifyUser, updateUser,deleteUser
+    createUser, verifyUser, updateUser, deleteUser
 }
 
 // const { Users } = require('../models')
